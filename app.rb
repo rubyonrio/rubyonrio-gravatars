@@ -3,7 +3,7 @@ require 'RMagick'
 require 'open-uri'
 include Magick
 
-get '/image' do
+get '/' do
   gravatars = [
     'de89dceb54a28b2aa952663cc94d60fc',
     'cd0c263b28fce0e1d89a0002cc75648b',
@@ -17,15 +17,13 @@ get '/image' do
     '06e4c84000579d88c9298a6616a42e29'
   ]
 
-  code = []
   image = Magick::ImageList.new
 
   gravatars.each do |gravatar|
-    code << "<img src='http://www.gravatar.com/avatar/#{gravatar}' />"
     image.from_blob(open("http://www.gravatar.com/avatar/#{gravatar}").read)
   end
 
-  image.montage{self.geometry = "+0+0"}.write("./generated_gravatars_montage.jpg")
+  image.montage{self.geometry = "+0+0"}.write("./public/generated_gravatars_montage.jpg")
 
-  erb code.join('')
+  erb "<img src='generated_gravatars_montage.jpg' />"
 end
