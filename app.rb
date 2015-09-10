@@ -17,13 +17,16 @@ get '/' do
     '06e4c84000579d88c9298a6616a42e29'
   ]
 
-  image = Magick::ImageList.new
+  images = Magick::ImageList.new
 
   gravatars.each do |gravatar|
-    image.from_blob(open("http://www.gravatar.com/avatar/#{gravatar}").read)
+    images.from_blob(open("http://www.gravatar.com/avatar/#{gravatar}").read)
   end
 
-  image.montage{self.geometry = "+0+0"}.write("./public/generated_gravatars_montage.jpg")
+  images = images.quantize(256, Magick::GRAYColorspace)
+
+  image = images.montage{ self.geometry = "+0+0" }
+  image.level(-Magick::QuantumRange * 0.15, Magick::QuantumRange, 1).write("./public/generated_gravatars_montage.jpg")
 
   erb "<img src='generated_gravatars_montage.jpg' />"
 end
